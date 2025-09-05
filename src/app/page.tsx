@@ -23,7 +23,7 @@ export default function DashboardPage() {
     setInArea(false);
     toast({
       title: "Hope you enjoyed your visit!",
-      description: "Thanks for exploring with RoamFree. We've logged your trip details for you.",
+      description: "Thanks for exploring with Bulbul. We've logged your trip details for you.",
       variant: "default",
     })
   };

@@ -39,7 +39,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <SidebarHeader>
           <div className="flex items-center gap-2 p-2">
             <Logo className="w-8 h-8 text-primary" />
-            <span className="text-lg font-semibold font-headline">RoamFree</span>
+            <span className="text-lg font-semibold font-headline">Bulbul</span>
           </div>
         </SidebarHeader>
         <SidebarMenu>
