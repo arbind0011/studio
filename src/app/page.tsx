@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from "@/hooks/use-toast"
 import { Sparkles } from 'lucide-react';
+import Link from 'next/link';
 
 export default function DashboardPage() {
   const [inArea, setInArea] = useState(false);
@@ -33,6 +34,9 @@ export default function DashboardPage() {
       <div className="flex-1 space-y-4 p-4 sm:p-8 pt-6">
         <div className="flex items-center justify-between space-y-2">
           <h1 className="text-3xl font-bold tracking-tight font-headline">Dashboard</h1>
+          <Link href="/login" passHref>
+            <Button>Login</Button>
+          </Link>
         </div>
 
         <Card>
