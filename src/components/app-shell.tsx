@@ -24,7 +24,7 @@ import Link from "next/link"
 import { BlockchainId } from "@/components/blockchain-id"
 
 const menuItems = [
-  { href: "/", label: "Dashboard", icon: LayoutGrid },
+  { href: "/dashboard", label: "Dashboard", icon: LayoutGrid },
   { href: "/hotels", label: "Hotels", icon: BedDouble },
   { href: "/restaurants", label: "Restaurants", icon: UtensilsCrossed },
   { href: "/attractions", label: "Attractions", icon: Landmark },
@@ -35,7 +35,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
 
   // Do not render AppShell for login page
-  if (pathname === "/login") {
+  if (pathname === "/") {
     return <>{children}</>
   }
 
@@ -66,12 +66,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <SidebarMenuItem>
             <SidebarMenuButton
                 asChild
-                isActive={pathname === "/login"}
-                tooltip={{ children: "Login", side: "right" }}
+                isActive={pathname === "/"}
+                tooltip={{ children: "Logout", side: "right" }}
               >
-                <Link href="/login">
+                <Link href="/">
                   <LogIn />
-                  <span>Login</span>
+                  <span>Logout</span>
                 </Link>
               </SidebarMenuButton>
           </SidebarMenuItem>
