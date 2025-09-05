@@ -58,7 +58,7 @@ const prompt = ai.definePrompt({
   prompt: `You are a local restaurant recommendation expert.
 
   Based on the user's current location (latitude: {{{latitude}}}, longitude: {{{longitude}}}) and preferences ({{{preferences}}}), recommend a list of restaurants, cafes, and eateries.
-  For each place, provide its name, a brief description, its full address with exact latitude and longitude, and a placeholder image URL from 'https://picsum.photos/400/300'.
+  For each place, provide its name, a brief description, its full address with exact latitude and longitude, and a placeholder image URL from 'https://picsum.photos/seed/{random}/400/300'. Use a different random seed for each eatery.
   Return the recommendations in the requested output format.
   Do not include contact information.
   Do not include disclaimers that you are an AI. Just return the list of recommendations.

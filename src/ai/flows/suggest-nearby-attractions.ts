@@ -53,7 +53,7 @@ const prompt = ai.definePrompt({
   Latitude: {{{latitude}}}
   Longitude: {{{longitude}}}
 
-  Suggest some attractions near this location, taking into account the time of day, weather, and user interests. For each attraction, provide its name, a short description, its full address with exact latitude and longitude, and a placeholder image URL from 'https://picsum.photos/400/300'. Return an array of suggestions.
+  Suggest some attractions near this location, taking into account the time of day, weather, and user interests. For each attraction, provide its name, a short description, its full address with exact latitude and longitude, and a placeholder image URL from 'https://picsum.photos/seed/{random}/400/300'. Use a different random seed for each attraction. Return an array of suggestions.
   `,
 });
 

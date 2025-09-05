@@ -52,7 +52,7 @@ const prompt = ai.definePrompt({
   name: 'personalizedHotelRecommendationsPrompt',
   input: {schema: PersonalizedHotelRecommendationsInputSchema},
   output: {schema: PersonalizedHotelRecommendationsOutputSchema},
-  prompt: `You are a hotel recommendation expert. Based on the user's current location and preferences, provide a list of suitable hotel recommendations. For each hotel, provide its name, a short description, its full address with exact latitude and longitude, and a placeholder image URL from 'https://picsum.photos/400/300'.
+  prompt: `You are a hotel recommendation expert. Based on the user's current location and preferences, provide a list of suitable hotel recommendations. For each hotel, provide its name, a short description, its full address with exact latitude and longitude, and a placeholder image URL from 'https://picsum.photos/seed/{random}/400/300'. Use a different random seed for each hotel.
 
 Current Location: {{{location}}}
 User Preferences: {{{preferences}}}

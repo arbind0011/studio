@@ -51,10 +51,6 @@ export function Map() {
     }
   }, [toast]);
   
-  useEffect(() => {
-      setDirections(null);
-  }, [destinationLat, destinationLng])
-
   const directionsCallback = useCallback((
     response: google.maps.DirectionsResult | null,
     status: google.maps.DirectionsStatus
@@ -72,7 +68,7 @@ export function Map() {
   }, [toast]);
 
   if (loadError) {
-    return <div className='p-4 text-center text-destructive'>Error loading map. Please ensure your Google Maps API key is valid and correctly configured in the .env file.</div>;
+    return <div className='p-4 text-center text-destructive'>Error loading map. Please ensure your Google Maps API key is valid, has billing enabled, and is correctly configured in the .env file.</div>;
   }
 
   if (!isLoaded || !center) {
@@ -92,7 +88,7 @@ export function Map() {
             zoomControl: true,
         }}
       >
-        {destination && center && !directions ? (
+        {destination && center && !directions && (
             <DirectionsService
                 options={{
                     destination: destination,
@@ -101,7 +97,7 @@ export function Map() {
                 }}
                 callback={directionsCallback}
             />
-        ) : null}
+        )}
 
         {directions ? (
             <DirectionsRenderer
