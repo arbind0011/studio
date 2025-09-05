@@ -11,6 +11,7 @@ import { Route } from 'lucide-react';
 export function Map() {
   const [center, setCenter] = useState<{ lat: number, lng: number } | null>(null);
   const [directions, setDirections] = useState<google.maps.DirectionsResult | null>(null);
+  const [isMapLoaded, setMapLoaded] = useState(false);
   const { toast } = useToast();
   const searchParams = useSearchParams();
 
@@ -36,8 +37,7 @@ export function Map() {
             description: "Unable to retrieve your location. Using a default location.",
             variant: "destructive"
           });
-          // Fallback location for demo purposes
-          setCenter({ lat: 40.7128, lng: -74.0060 });
+          setCenter({ lat: 40.7128, lng: -74.0060 }); // Fallback location
         }
       );
     } else {
@@ -46,8 +46,7 @@ export function Map() {
             description: "Your browser does not support geolocation. Using a default location.",
             variant: "destructive"
           });
-        // Fallback location for demo purposes
-        setCenter({ lat: 40.7128, lng: -74.0060 });
+        setCenter({ lat: 40.7128, lng: -74.0060 }); // Fallback location
     }
   }, [toast]);
   
@@ -59,11 +58,13 @@ export function Map() {
       setDirections(response);
     } else {
       console.error(`error fetching directions ${status}`);
-      toast({
-          title: "Navigation Error",
-          description: "Could not calculate the route to the destination.",
-          variant: "destructive"
-      });
+      if (status !== 'ZERO_RESULTS') { // Avoid showing error for no-route-found cases
+        toast({
+            title: "Navigation Error",
+            description: "Could not calculate the route to the destination.",
+            variant: "destructive"
+        });
+      }
     }
   }, [toast]);
 
@@ -82,13 +83,14 @@ export function Map() {
       <GoogleMap
         mapContainerStyle={{ width: '100%', height: '100%' }}
         center={center}
-        zoom={destination ? 12 : 15}
+        zoom={12}
+        onLoad={() => setMapLoaded(true)}
         options={{
             disableDefaultUI: true,
             zoomControl: true,
         }}
       >
-        {destination && center && !directions && (
+        {isMapLoaded && destination && center && !directions && (
             <DirectionsService
                 options={{
                     destination: destination,
@@ -103,20 +105,21 @@ export function Map() {
             <DirectionsRenderer
                 options={{
                     directions: directions,
-                    suppressMarkers: true,
+                    suppressMarkers: true, // We'll render our own markers
                 }}
             />
         ) : (
             <Marker position={center} title="Your Location" />
         )}
-
-        {directions && travelInfo?.end_location && (
-            <Marker position={travelInfo.end_location} title="Destination"/>
-        )}
         
+        {destination && (
+             <Marker position={destination} title="Destination"/>
+        )}
+
         {directions && travelInfo?.start_location && (
              <Marker position={travelInfo.start_location} title="Your Location"/>
         )}
+
       </GoogleMap>
       {travelInfo && (
         <Card className="absolute top-4 left-4 z-10">
