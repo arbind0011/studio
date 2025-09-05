@@ -32,6 +32,8 @@ const PersonalizedHotelRecommendationsOutputSchema = z.object({
       name: z.string().describe('The name of the hotel.'),
       description: z.string().describe('A brief description of the hotel.'),
       address: z.string().describe('The full address of the hotel.'),
+      latitude: z.number().describe('The latitude of the hotel.'),
+      longitude: z.number().describe('The longitude of the hotel.'),
       imageUrl: z.string().url().describe('A URL for an image of the hotel.'),
     })
   ),
@@ -50,7 +52,7 @@ const prompt = ai.definePrompt({
   name: 'personalizedHotelRecommendationsPrompt',
   input: {schema: PersonalizedHotelRecommendationsInputSchema},
   output: {schema: PersonalizedHotelRecommendationsOutputSchema},
-  prompt: `You are a hotel recommendation expert. Based on the user's current location and preferences, provide a list of suitable hotel recommendations. For each hotel, provide its name, a short description, its full address, and a placeholder image URL from 'https://picsum.photos/400/300'.
+  prompt: `You are a hotel recommendation expert. Based on the user's current location and preferences, provide a list of suitable hotel recommendations. For each hotel, provide its name, a short description, its full address with exact latitude and longitude, and a placeholder image URL from 'https://picsum.photos/400/300'.
 
 Current Location: {{{location}}}
 User Preferences: {{{preferences}}}

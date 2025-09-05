@@ -23,7 +23,7 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 type Coordinates = { latitude: number; longitude: number };
-type Recommendation = { name: string; description: string; address: string; imageUrl: string };
+type Recommendation = { name: string; description: string; address: string; imageUrl: string; latitude: number; longitude: number; };
 
 export default function RestaurantsPage() {
   const [recommendations, setRecommendations] = useState<Recommendation[] | null>(null);
@@ -88,51 +88,52 @@ export default function RestaurantsPage() {
     <AppShell>
       <div className="flex-1 space-y-4 p-4 sm:p-8 pt-6">
         <div className="flex items-center justify-between space-y-2">
-          <h1 className="text-3xl font-bold tracking-tight font-headline">Restaurant Recommendations</h1>
+            <h1 className="text-3xl font-bold tracking-tight font-headline">Restaurant Recommendations</h1>
         </div>
 
         <Card>
             <CardHeader>
-                <CardTitle className="font-headline">Discover Local Flavors</CardTitle>
+                <CardTitle className="font-headline">Find Your Next Meal</CardTitle>
                 <CardDescription>
-                    Get AI-powered suggestions for the best local restaurants, cafes, and eateries.
+                    Discover local restaurants, cafes, and eateries based on your cravings.
                 </CardDescription>
             </CardHeader>
             <CardContent>
-                <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                        <FormItem>
-                            <FormLabel>Your Location</FormLabel>
-                            <div className="flex items-center gap-4">
-                                <Button type="button" variant="outline" onClick={handleGetLocation}>
-                                    <MapPin className="mr-2 h-4 w-4" /> Get My Location
-                                </Button>
-                                {location && <p className="text-sm text-green-600">Location captured successfully!</p>}
-                            </div>
-                            {locationError && <p className="text-sm font-medium text-destructive">{locationError}</p>}
-                        </FormItem>
+            <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                    <FormItem>
+                        <FormLabel>Your Location</FormLabel>
+                        <div className="flex items-center gap-4">
+                            <Button type="button" variant="outline" onClick={handleGetLocation}>
+                                <MapPin className="mr-2 h-4 w-4" /> Get My Location
+                            </Button>
+                            {location && <p className="text-sm text-green-600">Location captured successfully!</p>}
+                        </div>
+                        {locationError && <p className="text-sm font-medium text-destructive">{locationError}</p>}
+                    </FormItem>
 
-                        <FormField
-                            control={form.control}
-                            name="preferences"
-                            render={({ field }) => (
-                                <FormItem>
-                                <FormLabel>Cuisine & Preferences</FormLabel>
-                                <FormControl>
-                                    <Textarea
-                                        placeholder="e.g., cheap eats, vegan options, romantic ambiance, etc."
-                                        {...field}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <Button type="submit" disabled={isLoading}>
-                            {isLoading ? "Searching..." : "Find Restaurants"}
-                        </Button>
-                    </form>
-                </Form>
+                    <FormField
+                        control={form.control}
+                        name="preferences"
+                        render={({ field }) => (
+                            <FormItem>
+                            <FormLabel>Preferences & Cravings</FormLabel>
+                            <FormControl>
+                                <Textarea
+                                    placeholder="e.g., spicy ramen, vegetarian options, family-friendly, etc."
+                                    {...field}
+                                />
+                            </FormControl>
+                            <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
+                    <Button type="submit" disabled={isLoading}>
+                        {isLoading ? "Searching..." : "Find Restaurants"}
+                    </Button>
+                </form>
+            </Form>
             </CardContent>
         </Card>
         
@@ -145,12 +146,12 @@ export default function RestaurantsPage() {
             <CardHeader>
               <CardTitle className="font-headline flex items-center gap-2">
                 <Sparkles className="text-accent" />
-                Bon Appétit! Here are your tasty options
+                Bon Appétit!
               </CardTitle>
             </CardHeader>
             <CardContent className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {recommendations.map((rec) => (
-                    <Link key={rec.name} href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(rec.address)}`} target="_blank" rel="noopener noreferrer" className="block">
+                    <Link key={rec.name} href={`/dashboard?destinationLat=${rec.latitude}&destinationLng=${rec.longitude}`} className="block">
                         <Card className="flex flex-col h-full transition-all hover:shadow-lg hover:-translate-y-1">
                             <div className="relative h-48 w-full">
                                 <Image src={rec.imageUrl} alt={rec.name} fill className="object-cover rounded-t-lg" data-ai-hint="restaurant food" />

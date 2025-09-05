@@ -23,7 +23,7 @@ const formSchema = z.object({
 });
 
 type FormValues = z.infer<typeof formSchema>;
-type Recommendation = { name: string; description: string; address: string; imageUrl: string };
+type Recommendation = { name: string; description: string; address: string; imageUrl: string; latitude: number; longitude: number; };
 
 export default function HotelsPage() {
   const [recommendations, setRecommendations] = useState<Recommendation[] | null>(null);
@@ -121,7 +121,7 @@ export default function HotelsPage() {
             </CardHeader>
             <CardContent className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {recommendations.map((rec) => (
-                    <Link key={rec.name} href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(rec.address)}`} target="_blank" rel="noopener noreferrer" className="block">
+                    <Link key={rec.name} href={`/dashboard?destinationLat=${rec.latitude}&destinationLng=${rec.longitude}`} className="block">
                         <Card className="flex flex-col h-full transition-all hover:shadow-lg hover:-translate-y-1">
                             <div className="relative h-48 w-full">
                                 <Image src={rec.imageUrl} alt={rec.name} fill className="object-cover rounded-t-lg" data-ai-hint="hotel building" />

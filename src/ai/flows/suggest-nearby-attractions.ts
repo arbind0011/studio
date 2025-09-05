@@ -27,6 +27,8 @@ const SuggestNearbyAttractionsOutputSchema = z.object({
       name: z.string().describe('The name of the attraction.'),
       description: z.string().describe('A brief description of the attraction.'),
       address: z.string().describe('The address of the attraction.'),
+      latitude: z.number().describe('The latitude of the attraction.'),
+      longitude: z.number().describe('The longitude of the attraction.'),
       imageUrl: z.string().url().describe('A URL for an image of the attraction.'),
     })
   ).describe('A list of suggested nearby attractions.'),
@@ -51,7 +53,7 @@ const prompt = ai.definePrompt({
   Latitude: {{{latitude}}}
   Longitude: {{{longitude}}}
 
-  Suggest some attractions near this location, taking into account the time of day, weather, and user interests. For each attraction, provide its name, a short description, its full address, and a placeholder image URL from 'https://picsum.photos/400/300'. Return an array of suggestions.
+  Suggest some attractions near this location, taking into account the time of day, weather, and user interests. For each attraction, provide its name, a short description, its full address with exact latitude and longitude, and a placeholder image URL from 'https://picsum.photos/400/300'. Return an array of suggestions.
   `,
 });
 
