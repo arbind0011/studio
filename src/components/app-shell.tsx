@@ -17,7 +17,7 @@ import {
   Landmark,
   Settings,
 } from "lucide-react"
-import { Logo } from "@/components/icons"
+import Image from "next/image"
 import { usePathname } from "next/navigation"
 import Link from "next/link"
 import { BlockchainId } from "@/components/blockchain-id"
@@ -38,7 +38,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <Sidebar>
         <SidebarHeader>
           <div className="flex items-center gap-2 p-2">
-            <Logo className="w-8 h-8 text-primary" />
+            <Image src="https://picsum.photos/32/32" width={32} height={32} alt="Bulbul logo" className="rounded-md" data-ai-hint="logo" />
             <span className="text-lg font-semibold font-headline">Bulbul</span>
           </div>
         </SidebarHeader>
