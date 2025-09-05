@@ -38,7 +38,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <Sidebar>
         <SidebarHeader>
           <div className="flex items-center gap-2 p-2">
-            <Image src="https://picsum.photos/32/32" width={32} height={32} alt="Bulbul logo" className="rounded-md" data-ai-hint="logo" />
+            <Image src="/logo.png" width={32} height={32} alt="Bulbul logo" className="rounded-md" data-ai-hint="logo" />
             <span className="text-lg font-semibold font-headline">Bulbul</span>
           </div>
         </SidebarHeader>
