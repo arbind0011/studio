@@ -34,14 +34,6 @@ export default function AttractionsPage() {
   const [locationError, setLocationError] = useState<string | null>(null);
   const { toast } = useToast();
 
-  const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      interests: "history, art, street food",
-      weather: "Sunny",
-    },
-  });
-
   const handleGetLocation = () => {
     setLocationError(null);
     if (navigator.geolocation) {
@@ -60,6 +52,7 @@ export default function AttractionsPage() {
       );
     } else {
       setLocationError("Geolocation is not supported by this browser.");
+      toast({ title: "Browser not supported", description: "Your browser does not support geolocation.", variant: "destructive" });
     }
   };
 

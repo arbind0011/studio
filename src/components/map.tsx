@@ -33,7 +33,7 @@ export function Map() {
         () => {
           toast({
             title: "Location Error",
-            description: "Unable to retrieve your location. Please grant permission and try again.",
+            description: "Unable to retrieve your location. Using a default location.",
             variant: "destructive"
           });
           // Fallback location for demo purposes
@@ -43,7 +43,7 @@ export function Map() {
     } else {
         toast({
             title: "Geolocation not supported",
-            description: "Your browser does not support geolocation.",
+            description: "Your browser does not support geolocation. Using a default location.",
             variant: "destructive"
           });
         // Fallback location for demo purposes
