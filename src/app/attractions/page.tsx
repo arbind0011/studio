@@ -34,6 +34,14 @@ export default function AttractionsPage() {
   const [locationError, setLocationError] = useState<string | null>(null);
   const { toast } = useToast();
 
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      interests: "",
+      weather: "Sunny",
+    },
+  });
+
   const handleGetLocation = () => {
     setLocationError(null);
     if (navigator.geolocation) {
