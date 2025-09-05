@@ -17,7 +17,7 @@ export async function getHotelRecommendations(input: PersonalizedHotelRecommenda
     
     try {
         const result = await personalizedHotelRecommendations(validatedInput.data);
-        return { recommendations: result.hotelRecommendations };
+        return { recommendations: result.recommendations };
     } catch (e) {
         console.error(e);
         return { error: 'Failed to get recommendations. Please try again.' };

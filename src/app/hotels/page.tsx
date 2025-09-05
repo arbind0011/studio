@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -13,7 +14,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader } from "@/components/loader";
 import { getHotelRecommendations } from "./actions";
-import { BedDouble, Sparkles } from "lucide-react";
+import { BedDouble, Sparkles, MapPin } from "lucide-react";
+import Link from "next/link";
 
 const formSchema = z.object({
   location: z.string().min(2, { message: "Location must be at least 2 characters." }),
@@ -21,9 +23,10 @@ const formSchema = z.object({
 });
 
 type FormValues = z.infer<typeof formSchema>;
+type Recommendation = { name: string; description: string; address: string; imageUrl: string };
 
 export default function HotelsPage() {
-  const [recommendations, setRecommendations] = useState<string | null>(null);
+  const [recommendations, setRecommendations] = useState<Recommendation[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -116,17 +119,28 @@ export default function HotelsPage() {
                 Here are your recommendations
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-4 whitespace-pre-wrap font-body">
-                {recommendations.split('\n\n').map((rec, index) => (
-                    <div key={index} className="p-4 border rounded-lg bg-background flex gap-4 items-start transition-all hover:shadow-md hover:border-primary/50">
-                        <div className="p-2 bg-primary/20 rounded-full">
-                            <BedDouble className="w-6 h-6 text-primary"/>
-                        </div>
-                        <p>{rec.trim()}</p>
-                    </div>
+            <CardContent className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {recommendations.map((rec) => (
+                    <Link key={rec.name} href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(rec.address)}`} target="_blank" rel="noopener noreferrer" className="block">
+                        <Card className="flex flex-col h-full transition-all hover:shadow-lg hover:-translate-y-1">
+                            <div className="relative h-48 w-full">
+                                <Image src={rec.imageUrl} alt={rec.name} fill className="object-cover rounded-t-lg" data-ai-hint="hotel building" />
+                            </div>
+                            <CardHeader>
+                                <CardTitle className="font-headline flex items-center gap-3">
+                                    <div className="p-2 bg-primary/20 rounded-full">
+                                        <BedDouble className="w-5 h-5 text-primary"/>
+                                    </div>
+                                    {rec.name}
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="flex-grow">
+                                <p className="text-muted-foreground text-sm font-body mb-2">{rec.description}</p>
+                                <p className="text-xs font-medium text-foreground flex items-center gap-1"><MapPin className="w-3 h-3"/>{rec.address}</p>
+                            </CardContent>
+                        </Card>
+                    </Link>
                 ))}
-              </div>
             </CardContent>
           </Card>
         )}

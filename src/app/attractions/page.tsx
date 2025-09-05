@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-
+import Image from "next/image";
 import { AppShell } from "@/components/app-shell";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -15,6 +15,7 @@ import { Loader } from "@/components/loader";
 import { getAttractionSuggestions } from "./actions";
 import { Landmark, Sparkles, MapPin } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import Link from "next/link";
 
 const formSchema = z.object({
   interests: z.string().min(3, { message: "Please list at least one interest." }),
@@ -23,7 +24,7 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 type Coordinates = { latitude: number; longitude: number };
-type Suggestion = { name: string; description: string; address: string; };
+type Suggestion = { name: string; description: string; address: string; imageUrl: string };
 
 export default function AttractionsPage() {
   const [suggestions, setSuggestions] = useState<Suggestion[] | null>(null);
@@ -182,20 +183,25 @@ export default function AttractionsPage() {
             </CardHeader>
             <CardContent className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {suggestions.map((item) => (
-                    <Card key={item.name} className="flex flex-col transition-all hover:shadow-lg hover:-translate-y-1">
-                        <CardHeader>
-                            <CardTitle className="font-headline flex items-center gap-3">
-                                <div className="p-2 bg-primary/20 rounded-full">
-                                    <Landmark className="w-5 h-5 text-primary"/>
-                                </div>
-                                {item.name}
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent className="flex-grow">
-                            <p className="text-muted-foreground text-sm font-body mb-2">{item.description}</p>
-                            <p className="text-xs font-medium text-foreground flex items-center gap-1"><MapPin className="w-3 h-3"/>{item.address}</p>
-                        </CardContent>
-                    </Card>
+                    <Link key={item.name} href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.address)}`} target="_blank" rel="noopener noreferrer" className="block">
+                        <Card className="flex flex-col h-full transition-all hover:shadow-lg hover:-translate-y-1">
+                            <div className="relative h-48 w-full">
+                                <Image src={item.imageUrl} alt={item.name} fill className="object-cover rounded-t-lg" data-ai-hint="attraction" />
+                            </div>
+                            <CardHeader>
+                                <CardTitle className="font-headline flex items-center gap-3">
+                                    <div className="p-2 bg-primary/20 rounded-full">
+                                        <Landmark className="w-5 h-5 text-primary"/>
+                                    </div>
+                                    {item.name}
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="flex-grow">
+                                <p className="text-muted-foreground text-sm font-body mb-2">{item.description}</p>
+                                <p className="text-xs font-medium text-foreground flex items-center gap-1"><MapPin className="w-3 h-3"/>{item.address}</p>
+                            </CardContent>
+                        </Card>
+                    </Link>
                 ))}
             </CardContent>
           </Card>

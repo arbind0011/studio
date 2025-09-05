@@ -27,11 +27,14 @@ export type PersonalizedHotelRecommendationsInput = z.infer<
 >;
 
 const PersonalizedHotelRecommendationsOutputSchema = z.object({
-  hotelRecommendations: z
-    .string()
-    .describe(
-      'A list of hotel recommendations based on the user location and preferences.'
-    ),
+  recommendations: z.array(
+    z.object({
+      name: z.string().describe('The name of the hotel.'),
+      description: z.string().describe('A brief description of the hotel.'),
+      address: z.string().describe('The full address of the hotel.'),
+      imageUrl: z.string().url().describe('A URL for an image of the hotel.'),
+    })
+  ),
 });
 export type PersonalizedHotelRecommendationsOutput = z.infer<
   typeof PersonalizedHotelRecommendationsOutputSchema
@@ -47,12 +50,12 @@ const prompt = ai.definePrompt({
   name: 'personalizedHotelRecommendationsPrompt',
   input: {schema: PersonalizedHotelRecommendationsInputSchema},
   output: {schema: PersonalizedHotelRecommendationsOutputSchema},
-  prompt: `You are a hotel recommendation expert. Based on the user's current location and preferences, provide a list of suitable hotel recommendations.
+  prompt: `You are a hotel recommendation expert. Based on the user's current location and preferences, provide a list of suitable hotel recommendations. For each hotel, provide its name, a short description, its full address, and a placeholder image URL from 'https://picsum.photos/400/300'.
 
 Current Location: {{{location}}}
 User Preferences: {{{preferences}}}
 
-Hotel Recommendations:`,
+Return the recommendations in the requested output format.`,
 });
 
 const personalizedHotelRecommendationsFlow = ai.defineFlow(

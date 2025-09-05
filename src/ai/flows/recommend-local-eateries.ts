@@ -29,7 +29,14 @@ export type RecommendLocalEateriesInput = z.infer<
 
 const RecommendLocalEateriesOutputSchema = z.object({
   recommendations: z
-    .array(z.string())
+    .array(
+        z.object({
+            name: z.string().describe('The name of the eatery.'),
+            description: z.string().describe('A brief description of the eatery.'),
+            address: z.string().describe('The full address of the eatery.'),
+            imageUrl: z.string().url().describe('A URL for an image of the eatery.'),
+        })
+    )
     .describe('A list of recommended restaurants, cafes, and eateries.'),
 });
 export type RecommendLocalEateriesOutput = z.infer<
@@ -49,9 +56,9 @@ const prompt = ai.definePrompt({
   prompt: `You are a local restaurant recommendation expert.
 
   Based on the user's current location (latitude: {{{latitude}}}, longitude: {{{longitude}}}) and preferences ({{{preferences}}}), recommend a list of restaurants, cafes, and eateries.
-  Provide names and brief descriptions of each place.
+  For each place, provide its name, a brief description, its full address, and a placeholder image URL from 'https://picsum.photos/400/300'.
   Return the recommendations in the requested output format.
-  Do not include addresses or contact information.
+  Do not include contact information.
   Do not include disclaimers that you are an AI. Just return the list of recommendations.
   `,
 });
