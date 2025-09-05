@@ -45,7 +45,7 @@ export function Map() {
   }, [toast]);
 
   if (loadError) {
-    return <div className='p-4'>Error loading maps. Please check your API key.</div>;
+    return <div className='p-4 text-center text-destructive'>Error loading map. Please ensure your Google Maps API key is valid and correctly configured in the .env file.</div>;
   }
 
   if (!isLoaded || !center) {
