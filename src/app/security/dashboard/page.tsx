@@ -15,15 +15,15 @@ export default function SecurityDashboardPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // The 'unsub' function is returned by subscribeToVisitorLogs
     const unsubscribe = subscribeToVisitorLogs((logs) => {
       setVisitorLogs(logs);
       setLoading(false);
     });
 
-    // Cleanup subscription on unmount
+    // Cleanup subscription on component unmount
     return () => unsubscribe();
-  }, []);
-
+  }, []); // Empty dependency array ensures this effect runs only once on mount
 
   return (
     <AppShell>
@@ -71,7 +71,7 @@ export default function SecurityDashboardPage() {
                     <TableRow key={log.id}>
                       <TableCell className="font-medium">{log.name}</TableCell>
                       <TableCell>{log.email}</TableCell>
-                      <TableCell>{formatDistanceToNow(log.lastSeen.toDate(), { addSuffix: true })}</TableCell>
+                      <TableCell>{log.lastSeen ? formatDistanceToNow(log.lastSeen.toDate(), { addSuffix: true }) : 'N/A'}</TableCell>
                       <TableCell>
                         <Badge variant={log.status === 'Online' ? 'default' : 'secondary'} className={log.status === 'Online' ? 'bg-green-500' : ''}>
                           {log.status}

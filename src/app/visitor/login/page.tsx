@@ -66,6 +66,7 @@ export default function LoginPage() {
             title: "Registration Submitted",
             description: "Your information has been submitted for verification.",
         });
+        // The redirection is handled here after a successful submission.
         router.push('/dashboard');
     }
   };

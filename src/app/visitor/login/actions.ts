@@ -18,7 +18,9 @@ export async function submitVisitorData(data: VisitorFormInput) {
     const validatedData = formSchema.safeParse(data);
 
     if (!validatedData.success) {
-        return { error: 'Invalid data provided.' };
+        // Construct a more detailed error message if needed
+        const errorMessage = validatedData.error.errors.map(e => e.message).join(', ');
+        return { error: `Invalid data provided: ${errorMessage}` };
     }
 
     try {
@@ -26,6 +28,7 @@ export async function submitVisitorData(data: VisitorFormInput) {
         return { success: true };
     } catch (e) {
         console.error("Failed to add visitor log:", e);
-        return { error: 'There was an error submitting your information. Please try again.' };
+        const errorMessage = e instanceof Error ? e.message : 'An unknown error occurred.';
+        return { error: `There was an error submitting your information: ${errorMessage}` };
     }
 }
