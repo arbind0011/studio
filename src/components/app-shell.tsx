@@ -18,7 +18,6 @@ import {
   Landmark,
   Settings,
   LogIn,
-  Shield,
   UserCheck,
 } from "lucide-react"
 import Image from "next/image"
@@ -74,20 +73,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               </SidebarMenuButton>
             </SidebarMenuItem>
           ))}
-          {!isSecuritySection && (
-            <SidebarMenuItem>
-                <SidebarMenuButton
-                    asChild
-                    isActive={pathname.startsWith("/security")}
-                    tooltip={{ children: "Security", side: "right" }}
-                >
-                    <Link href="/security/login">
-                    <Shield />
-                    <span>Security</span>
-                    </Link>
-                </SidebarMenuButton>
-            </SidebarMenuItem>
-          )}
           <SidebarMenuItem>
             <SidebarMenuButton
                 asChild
