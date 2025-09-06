@@ -52,22 +52,31 @@ export default function LoginPage() {
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     setIsSubmitting(true);
     
-    const result = await submitVisitorData(data);
+    try {
+      const result = await submitVisitorData(data);
 
-    if (result.error) {
+      if (result.error) {
+          toast({
+              title: "Submission Failed",
+              description: result.error,
+              variant: "destructive",
+          });
+      } else {
+          toast({
+              title: "Registration Submitted",
+              description: "Your information has been submitted for verification.",
+          });
+          // The redirection is handled here after a successful submission.
+          router.push('/dashboard');
+      }
+    } catch (e) {
         toast({
-            title: "Submission Failed",
-            description: result.error,
+            title: "An Unexpected Error Occurred",
+            description: "Please try again later.",
             variant: "destructive",
         });
+    } finally {
         setIsSubmitting(false);
-    } else {
-        toast({
-            title: "Registration Submitted",
-            description: "Your information has been submitted for verification.",
-        });
-        // The redirection is handled here after a successful submission.
-        router.push('/dashboard');
     }
   };
 
