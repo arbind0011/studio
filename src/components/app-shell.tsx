@@ -1,3 +1,4 @@
+
 "use client"
 
 import {
@@ -17,6 +18,7 @@ import {
   Landmark,
   Settings,
   LogIn,
+  Shield,
 } from "lucide-react"
 import Image from "next/image"
 import { usePathname } from "next/navigation"
@@ -34,8 +36,8 @@ const menuItems = [
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
 
-  // Do not render AppShell for login page
-  if (pathname === "/") {
+  // Do not render AppShell for login pages
+  if (pathname === "/" || pathname === "/security/login") {
     return <>{children}</>
   }
 
@@ -53,7 +55,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <SidebarMenuItem key={item.href}>
               <SidebarMenuButton
                 asChild
-                isActive={pathname === item.href}
+                isActive={pathname.startsWith(item.href)}
                 tooltip={{ children: item.label, side: "right" }}
               >
                 <Link href={item.href}>
@@ -63,6 +65,18 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               </SidebarMenuButton>
             </SidebarMenuItem>
           ))}
+          <SidebarMenuItem>
+            <SidebarMenuButton
+                asChild
+                isActive={pathname.startsWith("/security")}
+                tooltip={{ children: "Security", side: "right" }}
+              >
+                <Link href="/security/login">
+                  <Shield />
+                  <span>Security</span>
+                </Link>
+              </SidebarMenuButton>
+          </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton
                 asChild
