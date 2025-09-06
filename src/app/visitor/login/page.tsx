@@ -15,6 +15,8 @@ import { useToast } from "@/hooks/use-toast";
 import { Wallet } from "lucide-react";
 import Image from "next/image";
 import { submitVisitorData } from "./actions";
+import { useWallet } from "@/hooks/use-wallet";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -30,6 +32,8 @@ export default function LoginPage() {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
+  const { connectWallet, isConnected, address } = useWallet();
+  const [isWalletModalOpen, setWalletModalOpen] = useState(false);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -43,46 +47,53 @@ export default function LoginPage() {
   });
 
   const handleConnectWallet = () => {
-    toast({
-        title: "Feature not available",
-        description: "Blockchain wallet integration is coming soon!",
-    });
+    setWalletModalOpen(true);
+    // Simulate connection
+    setTimeout(() => {
+        connectWallet();
+        setWalletModalOpen(false);
+        toast({
+            title: "Wallet Connected",
+            description: `Connected with address: ${address.slice(0, 6)}...${address.slice(-4)}`,
+        });
+    }, 1500);
   };
 
-  const onSubmit: SubmitHandler<FormValues> = (data) => {
-    toast({
-      title: "Registration Submitted",
-      description: "Your information is being processed. Redirecting now...",
-    });
-    router.push('/dashboard');
-  
-    submitVisitorData(data)
-      .then(result => {
-        if (result.error) {
-          toast({
+  const onSubmit: SubmitHandler<FormValues> = async (data) => {
+    setIsSubmitting(true);
+    const result = await submitVisitorData(data);
+    setIsSubmitting(false);
+
+    if (result.error) {
+        toast({
             title: "Submission Failed",
             description: result.error,
             variant: "destructive",
-          });
-        } else {
-          console.log("Background submission successful.");
-        }
-      })
-      .catch((e) => {
-        toast({
-          title: "An Unexpected Error Occurred",
-          description: "We couldn't save your data. Please try again later.",
-          variant: "destructive",
         });
-        console.error("Background submission failed:", e);
-      })
-      .finally(() => {
-        setIsSubmitting(false);
-      });
+    } else {
+        toast({
+            title: "Registration Submitted",
+            description: "Your information has been processed. Redirecting now...",
+        });
+        router.push('/dashboard');
+    }
   };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
+      <Dialog open={isWalletModalOpen} onOpenChange={setWalletModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Connecting to Wallet</DialogTitle>
+            <DialogDescription>
+                Please wait while we securely connect to your blockchain wallet. Approve the connection in your wallet provider.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-center items-center p-8">
+              <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-primary"></div>
+          </div>
+        </DialogContent>
+      </Dialog>
       <Card className="w-full max-w-lg">
         <CardHeader className="text-center">
             <div className="flex justify-center mb-4">
@@ -166,9 +177,9 @@ export default function LoginPage() {
                 />
               
               <div className="flex flex-col sm:flex-row gap-4">
-                  <Button type="button" variant="outline" onClick={handleConnectWallet} className="flex-1">
+                  <Button type="button" variant="outline" onClick={handleConnectWallet} className="flex-1" disabled={isConnected}>
                       <Wallet className="mr-2 h-4 w-4" />
-                      Connect Wallet
+                      {isConnected ? "Wallet Connected" : "Connect Wallet"}
                   </Button>
                   <Button type="submit" disabled={isSubmitting} className="flex-1">
                       {isSubmitting ? "Submitting..." : "Submit for Verification"}
