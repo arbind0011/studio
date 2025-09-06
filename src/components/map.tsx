@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { GoogleMap, useJsApiLoader, Marker, DirectionsService, DirectionsRenderer } from '@react-google-maps/api';
 import { useSearchParams } from 'next/navigation';
 import { Loader } from './loader';
@@ -8,12 +8,29 @@ import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent } from "@/components/ui/card";
 import { Route } from 'lucide-react';
 
+// Helper function to calculate distance between two coordinates
+function getDistance(coord1: { lat: number; lng: number }, coord2: { lat: number; lng: number }) {
+  const R = 6371; // Radius of the Earth in km
+  const dLat = (coord2.lat - coord1.lat) * Math.PI / 180;
+  const dLon = (coord2.lng - coord1.lng) * Math.PI / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(coord1.lat * Math.PI / 180) * Math.cos(coord2.lat * Math.PI / 180) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c; // Distance in km
+}
+
 export function Map() {
   const [center, setCenter] = useState<{ lat: number, lng: number } | null>(null);
   const [directions, setDirections] = useState<google.maps.DirectionsResult | null>(null);
   const [isMapLoaded, setMapLoaded] = useState(false);
   const { toast } = useToast();
   const searchParams = useSearchParams();
+  const geocoderRef = useRef<google.maps.Geocoder | null>(null);
+  const lastStateRef = useRef<string | null>(null);
+  const lastGeocodePositionRef = useRef<{ lat: number, lng: number } | null>(null);
+
 
   const destinationLat = searchParams.get('destinationLat');
   const destinationLng = searchParams.get('destinationLng');
@@ -21,34 +38,99 @@ export function Map() {
   
   const { isLoaded, loadError } = useJsApiLoader({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '',
-    libraries: ['places'],
+    libraries: ['places', 'geocoding'],
   });
 
-  useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          setCenter({ lat: latitude, lng: longitude });
-        },
-        () => {
-          toast({
-            title: "Location Error",
-            description: "Unable to retrieve your location. Using a default location.",
-            variant: "destructive"
-          });
-          setCenter({ lat: 40.7128, lng: -74.0060 }); // Fallback location
+  const handleStateChange = useCallback((newState: string) => {
+    const previousState = lastStateRef.current;
+    if (newState && newState !== previousState) {
+        if (previousState) {
+            toast({
+                title: `Thank you for visiting ${previousState}!`,
+                description: `We hope you had a wonderful time.`
+            });
         }
-      );
-    } else {
+        toast({
+            title: `Welcome to ${newState}!`,
+            description: `Enjoy your journey through the state.`
+        });
+        lastStateRef.current = newState;
+    }
+  }, [toast]);
+  
+  const reverseGeocode = useCallback((location: { lat: number; lng: number }) => {
+    if (!geocoderRef.current) {
+        if (window.google) {
+            geocoderRef.current = new window.google.maps.Geocoder();
+        } else {
+            return; // Google Maps API not ready
+        }
+    }
+    geocoderRef.current.geocode({ location }, (results, status) => {
+      if (status === 'OK' && results && results[0]) {
+        const stateComponent = results[0].address_components.find(
+          (c) => c.types.includes('administrative_area_level_1')
+        );
+        if (stateComponent) {
+          handleStateChange(stateComponent.long_name);
+        }
+      }
+    });
+  }, [handleStateChange]);
+
+  useEffect(() => {
+    let watchId: number;
+
+    if (isLoaded) {
+      const handlePositionUpdate = (position: GeolocationPosition) => {
+        const { latitude, longitude } = position.coords;
+        const newCenter = { lat: latitude, lng: longitude };
+        setCenter(newCenter);
+
+        const lastPos = lastGeocodePositionRef.current;
+        // Only geocode if the user has moved a significant distance (e.g., > 5km)
+        if (!lastPos || getDistance(lastPos, newCenter) > 5) {
+            lastGeocodePositionRef.current = newCenter;
+            reverseGeocode(newCenter);
+        }
+      };
+
+      const handlePositionError = () => {
+        toast({
+          title: "Location Error",
+          description: "Unable to retrieve your location. Using a default location.",
+          variant: "destructive"
+        });
+        const fallbackCenter = { lat: 40.7128, lng: -74.0060 };
+        setCenter(fallbackCenter);
+        reverseGeocode(fallbackCenter);
+      };
+
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(handlePositionUpdate, handlePositionError);
+        watchId = navigator.geolocation.watchPosition(handlePositionUpdate, handlePositionError, {
+          enableHighAccuracy: true,
+          timeout: 5000,
+          maximumAge: 0,
+        });
+      } else {
         toast({
             title: "Geolocation not supported",
             description: "Your browser does not support geolocation. Using a default location.",
             variant: "destructive"
-          });
-        setCenter({ lat: 40.7128, lng: -74.0060 }); // Fallback location
+        });
+        const fallbackCenter = { lat: 40.7128, lng: -74.0060 };
+        setCenter(fallbackCenter);
+        reverseGeocode(fallbackCenter);
+      }
     }
-  }, [toast]);
+
+    return () => {
+      if (watchId) {
+        navigator.geolocation.clearWatch(watchId);
+      }
+    };
+  }, [isLoaded, toast, reverseGeocode]);
   
   const directionsCallback = useCallback((
     response: google.maps.DirectionsResult | null,
