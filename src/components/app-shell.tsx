@@ -37,7 +37,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
 
   // Do not render AppShell for login pages
-  if (pathname === "/" || pathname === "/security/login") {
+  const noShellRoutes = ["/", "/security/login", "/visitor/login"];
+  if (noShellRoutes.includes(pathname)) {
     return <>{children}</>
   }
 
