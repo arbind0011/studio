@@ -49,35 +49,36 @@ export default function LoginPage() {
     });
   };
 
-  const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    setIsSubmitting(true);
-    
-    try {
-      const result = await submitVisitorData(data);
-
-      if (result.error) {
+  const onSubmit: SubmitHandler<FormValues> = (data) => {
+    toast({
+      title: "Registration Submitted",
+      description: "Your information is being processed. Redirecting now...",
+    });
+    router.push('/dashboard');
+  
+    submitVisitorData(data)
+      .then(result => {
+        if (result.error) {
           toast({
-              title: "Submission Failed",
-              description: result.error,
-              variant: "destructive",
-          });
-      } else {
-          toast({
-              title: "Registration Submitted",
-              description: "Your information has been submitted for verification.",
-          });
-          // The redirection is handled here after a successful submission.
-          router.push('/dashboard');
-      }
-    } catch (e) {
-        toast({
-            title: "An Unexpected Error Occurred",
-            description: "Please try again later.",
+            title: "Submission Failed",
+            description: result.error,
             variant: "destructive",
+          });
+        } else {
+          console.log("Background submission successful.");
+        }
+      })
+      .catch((e) => {
+        toast({
+          title: "An Unexpected Error Occurred",
+          description: "We couldn't save your data. Please try again later.",
+          variant: "destructive",
         });
-    } finally {
+        console.error("Background submission failed:", e);
+      })
+      .finally(() => {
         setIsSubmitting(false);
-    }
+      });
   };
 
   return (
