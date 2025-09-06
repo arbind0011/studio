@@ -14,6 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { Wallet } from "lucide-react";
 import Image from "next/image";
+import { submitVisitorData } from "./actions";
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -50,17 +51,24 @@ export default function LoginPage() {
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     setIsSubmitting(true);
-    console.log("Form data submitted:", data);
     
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    toast({
-      title: "Registration Submitted",
-      description: "Your information has been submitted for verification.",
-    });
+    const result = await submitVisitorData(data);
 
+    if (result.error) {
+        toast({
+            title: "Submission Failed",
+            description: result.error,
+            variant: "destructive",
+        });
+    } else {
+        toast({
+            title: "Registration Submitted",
+            description: "Your information has been submitted for verification.",
+        });
+        router.push('/dashboard');
+    }
+    
     setIsSubmitting(false);
-    router.push('/dashboard');
   };
 
   return (

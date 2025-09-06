@@ -1,16 +1,30 @@
 
 "use client";
 
+import { useEffect, useState } from "react";
 import { AppShell } from "@/components/app-shell";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { ShieldCheck, UserCheck } from "lucide-react";
-
-// The real visitor logs will be fetched from your backend.
-const visitorLogs: any[] = [];
+import { VisitorLog, subscribeToVisitorLogs } from "@/services/visitorService";
+import { formatDistanceToNow } from "date-fns";
 
 export default function SecurityDashboardPage() {
+  const [visitorLogs, setVisitorLogs] = useState<VisitorLog[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const unsubscribe = subscribeToVisitorLogs((logs) => {
+      setVisitorLogs(logs);
+      setLoading(false);
+    });
+
+    // Cleanup subscription on unmount
+    return () => unsubscribe();
+  }, []);
+
+
   return (
     <AppShell>
       <div className="flex-1 space-y-4 p-4 sm:p-8 pt-6">
@@ -40,23 +54,29 @@ export default function SecurityDashboardPage() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Visitor Name</TableHead>
+                  <TableHead>Email</TableHead>
                   <TableHead>Last Seen</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead>Last Known Location</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {visitorLogs.length > 0 ? (
+                {loading ? (
+                    <TableRow>
+                        <TableCell colSpan={4} className="h-24 text-center">
+                            Loading visitor logs...
+                        </TableCell>
+                    </TableRow>
+                ) : visitorLogs.length > 0 ? (
                   visitorLogs.map((log) => (
                     <TableRow key={log.id}>
                       <TableCell className="font-medium">{log.name}</TableCell>
-                      <TableCell>{log.lastSeen}</TableCell>
+                      <TableCell>{log.email}</TableCell>
+                      <TableCell>{formatDistanceToNow(log.lastSeen.toDate(), { addSuffix: true })}</TableCell>
                       <TableCell>
                         <Badge variant={log.status === 'Online' ? 'default' : 'secondary'} className={log.status === 'Online' ? 'bg-green-500' : ''}>
                           {log.status}
                         </Badge>
                       </TableCell>
-                      <TableCell>{log.location}</TableCell>
                     </TableRow>
                   ))
                 ) : (
