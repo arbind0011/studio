@@ -14,7 +14,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-export function BulbulWallet() {
+export function BulBulWallet() {
     const { toast } = useToast();
     const { isConnected, balance, address, connectWallet, disconnectWallet } = useWallet();
 

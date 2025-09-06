@@ -30,7 +30,7 @@ export default function SettingsPage() {
           <CardHeader>
             <CardTitle className="font-headline">Your Preferences</CardTitle>
             <CardDescription>
-              Customize your Bulbul experience.
+              Customize your BulBul experience.
             </CardDescription>
           </CardHeader>
           <CardContent>

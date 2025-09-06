@@ -23,7 +23,7 @@ import {
 import Image from "next/image"
 import { usePathname } from "next/navigation"
 import Link from "next/link"
-import { BulbulWallet } from "@/components/bulbul-wallet"
+import { BulBulWallet } from "@/components/bulbul-wallet"
 
 const visitorMenuItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutGrid },
@@ -54,8 +54,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <Sidebar>
         <SidebarHeader>
           <div className="flex items-center gap-2 p-2">
-            <Image src="/logo.jpg" width={32} height={32} alt="Bulbul logo" className="rounded-md" data-ai-hint="logo" />
-            <span className="text-lg font-semibold font-headline">{isSecuritySection ? "Bulbul Security" : "Bulbul"}</span>
+            <Image src="/logo.jpg" width={32} height={32} alt="BulBul logo" className="rounded-md" data-ai-hint="logo" />
+            <span className="text-lg font-semibold font-headline">{isSecuritySection ? "BulBul Security" : "BulBul"}</span>
           </div>
         </SidebarHeader>
         <SidebarMenu>
@@ -90,7 +90,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <SidebarInset>
         <header className="flex items-center justify-between p-4 border-b">
           <SidebarTrigger />
-          {!isSecuritySection && <BulbulWallet />}
+          {!isSecuritySection && <BulBulWallet />}
         </header>
         <main>{children}</main>
       </SidebarInset>

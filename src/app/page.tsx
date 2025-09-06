@@ -16,9 +16,9 @@ export default function RoleSelectionPage() {
       <Card className="w-full max-w-md text-center">
         <CardHeader>
           <div className="flex justify-center mb-4">
-            <Image src="/logo.jpg" width={48} height={48} alt="Bulbul logo" className="rounded-md" data-ai-hint="logo" />
+            <Image src="/logo.jpg" width={48} height={48} alt="BulBul logo" className="rounded-md" data-ai-hint="logo" />
           </div>
-          <CardTitle className="font-headline text-3xl">Welcome to Bulbul</CardTitle>
+          <CardTitle className="font-headline text-3xl">Welcome to BulBul</CardTitle>
           <CardDescription>
             Please select your role to continue.
           </CardDescription>

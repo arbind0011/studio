@@ -54,9 +54,9 @@ export default function SecurityLoginPage() {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
             <div className="flex justify-center mb-4">
-                <Image src="/logo.jpg" width={48} height={48} alt="Bulbul logo" className="rounded-md" />
+                <Image src="/logo.jpg" width={48} height={48} alt="BulBul logo" className="rounded-md" />
             </div>
-          <CardTitle className="font-headline text-3xl">Bulbul Security</CardTitle>
+          <CardTitle className="font-headline text-3xl">BulBul Security</CardTitle>
           <CardDescription>
             Security Officer Authentication Portal
           </CardDescription>

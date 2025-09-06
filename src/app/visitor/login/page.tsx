@@ -106,11 +106,11 @@ export default function LoginPage() {
       <Card className="w-full max-w-lg">
         <CardHeader className="text-center">
             <div className="flex justify-center mb-4">
-                <Image src="/logo.jpg" width={48} height={48} alt="Bulbul logo" className="rounded-md" />
+                <Image src="/logo.jpg" width={48} height={48} alt="BulBul logo" className="rounded-md" />
             </div>
-          <CardTitle className="font-headline text-3xl">Bulbul</CardTitle>
+          <CardTitle className="font-headline text-3xl">BulBul</CardTitle>
           <CardDescription>
-            Create your secure digital identity with Bulbul.
+            Create your secure digital identity with BulBul.
           </CardDescription>
         </CardHeader>
         <CardContent>
