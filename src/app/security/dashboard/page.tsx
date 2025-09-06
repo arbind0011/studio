@@ -7,14 +7,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { ShieldCheck, UserCheck } from "lucide-react";
 
-// Mock data for visitor logs
-const visitorLogs = [
-  { id: 1, name: "John Doe", aadhar: "XXXX-XXXX-1234", lastSeen: "2024-07-30 10:45 AM", status: "Online", location: "Main Lobby" },
-  { id: 2, name: "Jane Smith", aadhar: "XXXX-XXXX-5678", lastSeen: "2024-07-30 11:15 AM", status: "Online", location: "Cafe" },
-  { id: 3, name: "Peter Jones", aadhar: "XXXX-XXXX-9012", lastSeen: "2024-07-29 08:30 PM", status: "Offline", location: "Exited" },
-  { id: 4, name: "Mary Johnson", aadhar: "XXXX-XXXX-3456", lastSeen: "2024-07-30 11:30 AM", status: "Online", location: "Attraction Area A" },
-  { id: 5, name: "Chris Lee", aadhar: "XXXX-XXXX-7890", lastSeen: "2024-07-30 09:00 AM", status: "Offline", location: "Hotel Room 301" },
-];
+// The real visitor logs will be fetched from your backend.
+const visitorLogs: any[] = [];
 
 export default function SecurityDashboardPage() {
   return (
@@ -52,18 +46,26 @@ export default function SecurityDashboardPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {visitorLogs.map((log) => (
-                  <TableRow key={log.id}>
-                    <TableCell className="font-medium">{log.name}</TableCell>
-                    <TableCell>{log.lastSeen}</TableCell>
-                    <TableCell>
-                      <Badge variant={log.status === 'Online' ? 'default' : 'secondary'} className={log.status === 'Online' ? 'bg-green-500' : ''}>
-                        {log.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>{log.location}</TableCell>
-                  </TableRow>
-                ))}
+                {visitorLogs.length > 0 ? (
+                  visitorLogs.map((log) => (
+                    <TableRow key={log.id}>
+                      <TableCell className="font-medium">{log.name}</TableCell>
+                      <TableCell>{log.lastSeen}</TableCell>
+                      <TableCell>
+                        <Badge variant={log.status === 'Online' ? 'default' : 'secondary'} className={log.status === 'Online' ? 'bg-green-500' : ''}>
+                          {log.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>{log.location}</TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                    <TableRow>
+                        <TableCell colSpan={4} className="h-24 text-center">
+                            No visitor logs to display.
+                        </TableCell>
+                    </TableRow>
+                )}
               </TableBody>
             </Table>
           </CardContent>
