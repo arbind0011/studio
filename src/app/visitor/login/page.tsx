@@ -60,15 +60,16 @@ export default function LoginPage() {
             description: result.error,
             variant: "destructive",
         });
+        setIsSubmitting(false);
     } else {
         toast({
             title: "Registration Submitted",
             description: "Your information has been submitted for verification.",
         });
+        // The redirection will happen here, after success.
         router.push('/dashboard');
     }
-    
-    setIsSubmitting(false);
+    // We don't set submitting to false here if successful, because we are navigating away.
   };
 
   return (
