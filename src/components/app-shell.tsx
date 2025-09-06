@@ -21,7 +21,7 @@ import {
 import Image from "next/image"
 import { usePathname } from "next/navigation"
 import Link from "next/link"
-import { BlockchainId } from "@/components/blockchain-id"
+import { BulbulWallet } from "@/components/bulbul-wallet"
 
 const menuItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutGrid },
@@ -80,7 +80,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <SidebarInset>
         <header className="flex items-center justify-between p-4 border-b">
           <SidebarTrigger />
-          <BlockchainId />
+          <BulbulWallet />
         </header>
         <main>{children}</main>
       </SidebarInset>

@@ -69,7 +69,7 @@ export default function LoginPage() {
             <div className="flex justify-center mb-4">
                 <Image src="/logo.jpg" width={48} height={48} alt="Bulbul logo" className="rounded-md" />
             </div>
-          <CardTitle className="font-headline text-3xl">Blockchain Identity</CardTitle>
+          <CardTitle className="font-headline text-3xl">Bulbul</CardTitle>
           <CardDescription>
             Create your secure digital identity with Bulbul.
           </CardDescription>
