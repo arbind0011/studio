@@ -9,6 +9,15 @@ export interface VisitorLog extends VisitorFormInput {
     status: 'Online' | 'Offline';
 }
 
+export interface SosAlert {
+    id: string;
+    name: string;
+    email: string;
+    walletAddress: string;
+    message: string;
+    timestamp: Timestamp;
+}
+
 // Add a new visitor log to Firestore
 export async function addVisitorLog(visitorData: VisitorFormInput) {
     try {
@@ -38,4 +47,35 @@ export function subscribeToVisitorLogs(callback: (logs: VisitorLog[]) => void) {
     });
 
     return unsubscribe; // Return the unsubscribe function to clean up the listener
+}
+
+// Send an SOS alert
+export async function sendSosAlert(user: { name: string, email: string, walletAddress: string }) {
+    try {
+        await addDoc(collection(db, 'sos-alerts'), {
+            ...user,
+            message: 'Emergency! User requires immediate assistance.',
+            timestamp: serverTimestamp(),
+        });
+    } catch (error) {
+        console.error("Error sending SOS alert: ", error);
+        throw new Error("Could not send SOS alert.");
+    }
+}
+
+// Subscribe to real-time SOS alerts
+export function subscribeToSosAlerts(callback: (alerts: SosAlert[]) => void) {
+    const q = query(collection(db, "sos-alerts"), orderBy("timestamp", "desc"));
+
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const alerts: SosAlert[] = [];
+        querySnapshot.forEach((doc) => {
+            alerts.push({ id: doc.id, ...doc.data() } as SosAlert);
+        });
+        callback(alerts);
+    }, (error) => {
+        console.error("Error fetching SOS alerts: ", error);
+    });
+
+    return unsubscribe;
 }

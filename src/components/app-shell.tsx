@@ -19,14 +19,17 @@ import {
   Settings,
   LogIn,
   UserCheck,
+  MessageCircle,
 } from "lucide-react"
 import Image from "next/image"
 import { usePathname } from "next/navigation"
 import Link from "next/link"
 import { BulBulWallet } from "@/components/bulbul-wallet"
+import { SosButton } from "@/components/sos-button"
 
 const visitorMenuItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutGrid },
+  { href: "/chatbot", label: "Chatbot", icon: MessageCircle },
   { href: "/hotels", label: "Hotels", icon: BedDouble },
   { href: "/restaurants", label: "Restaurants", icon: UtensilsCrossed },
   { href: "/attractions", label: "Attractions", icon: Landmark },
@@ -90,7 +93,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <SidebarInset>
         <header className="flex items-center justify-between p-4 border-b">
           <SidebarTrigger />
-          {!isSecuritySection && <BulBulWallet />}
+          <div className="flex items-center gap-2">
+            {!isSecuritySection && <SosButton />}
+            {!isSecuritySection && <BulBulWallet />}
+          </div>
         </header>
         <main>{children}</main>
       </SidebarInset>

@@ -6,24 +6,30 @@ import { AppShell } from "@/components/app-shell";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { ShieldCheck, UserCheck } from "lucide-react";
-import { VisitorLog, subscribeToVisitorLogs } from "@/services/visitorService";
+import { ShieldCheck, UserCheck, ShieldAlert } from "lucide-react";
+import { VisitorLog, subscribeToVisitorLogs, SosAlert, subscribeToSosAlerts } from "@/services/visitorService";
 import { formatDistanceToNow } from "date-fns";
 
 export default function SecurityDashboardPage() {
   const [visitorLogs, setVisitorLogs] = useState<VisitorLog[]>([]);
+  const [sosAlerts, setSosAlerts] = useState<SosAlert[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // The 'unsub' function is returned by subscribeToVisitorLogs
-    const unsubscribe = subscribeToVisitorLogs((logs) => {
+    const unsubVisitors = subscribeToVisitorLogs((logs) => {
       setVisitorLogs(logs);
       setLoading(false);
     });
+    
+    const unsubSos = subscribeToSosAlerts((alerts) => {
+      setSosAlerts(alerts);
+    });
 
-    // Cleanup subscription on component unmount
-    return () => unsubscribe();
-  }, []); // Empty dependency array ensures this effect runs only once on mount
+    return () => {
+        unsubVisitors();
+        unsubSos();
+    };
+  }, []);
 
   return (
     <AppShell>
@@ -38,6 +44,48 @@ export default function SecurityDashboardPage() {
             <span>System Secure</span>
           </div>
         </div>
+
+        <Card className="border-destructive">
+            <CardHeader>
+                <CardTitle className="font-headline flex items-center gap-2 text-destructive">
+                    <ShieldAlert />
+                    SOS Alerts
+                </CardTitle>
+                <CardDescription>
+                    Immediate action required for these emergency alerts.
+                </CardDescription>
+            </CardHeader>
+            <CardContent>
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead>Time</TableHead>
+                            <TableHead>Visitor Name</TableHead>
+                            <TableHead>Message</TableHead>
+                            <TableHead>Wallet Address</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {sosAlerts.length > 0 ? (
+                            sosAlerts.map((alert) => (
+                                <TableRow key={alert.id} className="bg-destructive/10">
+                                    <TableCell>{alert.timestamp ? formatDistanceToNow(alert.timestamp.toDate(), { addSuffix: true }) : 'N/A'}</TableCell>
+                                    <TableCell className="font-medium">{alert.name}</TableCell>
+                                    <TableCell>{alert.message}</TableCell>
+                                    <TableCell className="font-mono text-xs">{alert.walletAddress}</TableCell>
+                                </TableRow>
+                            ))
+                        ) : (
+                            <TableRow>
+                                <TableCell colSpan={4} className="h-24 text-center">
+                                    No active SOS alerts.
+                                </TableCell>
+                            </TableRow>
+                        )}
+                    </TableBody>
+                </Table>
+            </CardContent>
+        </Card>
 
         <Card>
           <CardHeader>
