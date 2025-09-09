@@ -27,8 +27,8 @@ const translationTool = ai.defineTool(
   },
   async ({ text, targetLanguage, sourceLanguage }) => {
     const prompt = `Translate the following text from ${sourceLanguage || 'the detected language'} to ${targetLanguage}: "${text}"`;
-    const { output } = await ai.generate({ prompt, output: { format: 'text' } });
-    return output!;
+    const llmResponse = await ai.generate({ prompt, output: { format: 'text' } });
+    return llmResponse.text;
   }
 );
 
