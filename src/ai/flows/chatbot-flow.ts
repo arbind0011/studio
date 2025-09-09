@@ -12,6 +12,7 @@ import { recommendLocalEateries } from './recommend-local-eateries';
 import { personalizedHotelRecommendations } from './personalized-hotel-recommendations';
 import { suggestNearbyAttractions } from './suggest-nearby-attractions';
 import wav from 'wav';
+import { googleAI } from '@genkit-ai/googleai';
 
 // Define tools for the chatbot to use
 const translationTool = ai.defineTool(
@@ -27,7 +28,11 @@ const translationTool = ai.defineTool(
   },
   async ({ text, targetLanguage, sourceLanguage }) => {
     const prompt = `Translate the following text from ${sourceLanguage || 'the detected language'} to ${targetLanguage}: "${text}"`;
-    const llmResponse = await ai.generate({ prompt, output: { format: 'text' } });
+    const llmResponse = await ai.generate({
+        prompt,
+        model: googleAI.model('gemini-pro'),
+        output: { format: 'text' }
+    });
     return llmResponse.text;
   }
 );
