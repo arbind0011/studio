@@ -7,8 +7,9 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { ShieldCheck, UserCheck, ShieldAlert } from "lucide-react";
-import { VisitorLog, subscribeToVisitorLogs, SosAlert, subscribeToSosAlerts } from "@/services/visitorService";
+import { VisitorLog, subscribeToVisitorLogs, SosAlert } from "@/services/visitorService";
 import { formatDistanceToNow } from "date-fns";
+import { io } from "socket.io-client";
 
 export default function SecurityDashboardPage() {
   const [visitorLogs, setVisitorLogs] = useState<VisitorLog[]>([]);
@@ -20,14 +21,23 @@ export default function SecurityDashboardPage() {
       setVisitorLogs(logs);
       setLoading(false);
     });
-    
-    const unsubSos = subscribeToSosAlerts((alerts) => {
-      setSosAlerts(alerts);
+
+    const socket = io();
+
+    socket.on("sos", (data) => {
+        const newAlert: SosAlert = {
+            id: new Date().toISOString(), // Generate a unique ID for the alert
+            name: data.name,
+            message: "SOS button pressed",
+            walletAddress: data.walletAddress,
+            timestamp: new Date(),
+        };
+        setSosAlerts((prevAlerts) => [newAlert, ...prevAlerts]);
     });
 
     return () => {
         unsubVisitors();
-        unsubSos();
+        socket.disconnect();
     };
   }, []);
 
@@ -69,7 +79,7 @@ export default function SecurityDashboardPage() {
                         {sosAlerts.length > 0 ? (
                             sosAlerts.map((alert) => (
                                 <TableRow key={alert.id} className="bg-destructive/10">
-                                    <TableCell>{alert.timestamp ? formatDistanceToNow(alert.timestamp.toDate(), { addSuffix: true }) : 'N/A'}</TableCell>
+                                    <TableCell>{alert.timestamp ? formatDistanceToNow(new Date(alert.timestamp), { addSuffix: true }) : 'N/A'}</TableCell>
                                     <TableCell className="font-medium">{alert.name}</TableCell>
                                     <TableCell>{alert.message}</TableCell>
                                     <TableCell className="font-mono text-xs">{alert.walletAddress}</TableCell>

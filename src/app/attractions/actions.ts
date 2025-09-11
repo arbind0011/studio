@@ -20,7 +20,12 @@ export async function getAttractionSuggestions(input: SuggestNearbyAttractionsIn
     
     try {
         const result = await suggestNearbyAttractions(validatedInput.data);
-        return { suggestions: result.suggestions };
+        const suggestionsWithDestination = result.suggestions.map(suggestion => ({
+            ...suggestion,
+            destinationLat: suggestion.latitude,
+            destinationLng: suggestion.longitude
+        }));
+        return { suggestions: suggestionsWithDestination };
     } catch (e) {
         console.error(e);
         return { error: 'Failed to get suggestions. Please try again.' };

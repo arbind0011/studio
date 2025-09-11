@@ -8,33 +8,18 @@ import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent } from "@/components/ui/card";
 import { Route } from 'lucide-react';
 
-// Helper function to calculate distance between two coordinates
-function getDistance(coord1: { lat: number; lng: number }, coord2: { lat: number; lng: number }) {
-  const R = 6371; // Radius of the Earth in km
-  const dLat = (coord2.lat - coord1.lat) * Math.PI / 180;
-  const dLon = (coord2.lng - coord1.lng) * Math.PI / 180;
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(coord1.lat * Math.PI / 180) * Math.cos(coord2.lat * Math.PI / 180) *
-    Math.sin(dLon / 2) * Math.sin(dLon / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c; // Distance in km
-}
-
-export function Map() {
+export function Map(props: { destinationLat?: number, destinationLng?: number }) {
   const [center, setCenter] = useState<{ lat: number, lng: number } | null>(null);
   const [directions, setDirections] = useState<google.maps.DirectionsResult | null>(null);
-  const [isMapLoaded, setMapLoaded] = useState(false);
   const { toast } = useToast();
   const searchParams = useSearchParams();
   const geocoderRef = useRef<google.maps.Geocoder | null>(null);
   const lastStateRef = useRef<string | null>(null);
   const lastGeocodePositionRef = useRef<{ lat: number, lng: number } | null>(null);
 
-
-  const destinationLat = searchParams.get('destinationLat');
-  const destinationLng = searchParams.get('destinationLng');
-  const destination = destinationLat && destinationLng ? { lat: parseFloat(destinationLat), lng: parseFloat(destinationLng) } : null;
+  const destinationLat = props.destinationLat || searchParams.get('destinationLat');
+  const destinationLng = props.destinationLng || searchParams.get('destinationLng');
+  const destination = destinationLat && destinationLng ? { lat: parseFloat(destinationLat as string), lng: parseFloat(destinationLng as string) } : null;
   
   const { isLoaded, loadError } = useJsApiLoader({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '',
@@ -88,8 +73,7 @@ export function Map() {
         setCenter(newCenter);
 
         const lastPos = lastGeocodePositionRef.current;
-        // Only geocode if the user has moved a significant distance (e.g., > 5km)
-        if (!lastPos || getDistance(lastPos, newCenter) > 5) {
+        if (lastPos) {
             lastGeocodePositionRef.current = newCenter;
             reverseGeocode(newCenter);
         }
@@ -151,7 +135,8 @@ export function Map() {
   }, [toast]);
 
   if (loadError) {
-    return <div className='p-4 text-center text-destructive'>Error loading map. Please ensure your Google Maps API key is valid, has billing enabled, and is correctly configured in the .env file.</div>;
+    console.error("Google Maps Load Error:", loadError);
+    return <div className='p-4 text-center text-destructive'>Error loading map. Please ensure your Google Maps API key is valid, has billing enabled, and is correctly configured in the .env file. Check the browser console for more details.</div>;
   }
 
   if (!isLoaded || !center) {
@@ -166,13 +151,12 @@ export function Map() {
         mapContainerStyle={{ width: '100%', height: '100%' }}
         center={center}
         zoom={12}
-        onLoad={() => setMapLoaded(true)}
         options={{
             disableDefaultUI: true,
             zoomControl: true,
         }}
       >
-        {isMapLoaded && destination && center && !directions && (
+        {isLoaded && destination && center && !directions && (
             <DirectionsService
                 options={{
                     destination: destination,
@@ -187,7 +171,7 @@ export function Map() {
             <DirectionsRenderer
                 options={{
                     directions: directions,
-                    suppressMarkers: true, // We'll render our own markers
+                    suppressMarkers: true, 
                 }}
             />
         ) : (
