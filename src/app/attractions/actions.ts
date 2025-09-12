@@ -1,3 +1,4 @@
+
 "use server";
 
 import { suggestNearbyAttractions, SuggestNearbyAttractionsInput } from '@/ai/flows/suggest-nearby-attractions';
@@ -15,6 +16,7 @@ export async function getAttractionSuggestions(input: SuggestNearbyAttractionsIn
     const validatedInput = formSchema.safeParse(input);
 
     if (!validatedInput.success) {
+        console.error("Invalid input:", validatedInput.error);
         return { error: 'Invalid input. Please provide all required fields.' };
     }
     
@@ -27,7 +29,7 @@ export async function getAttractionSuggestions(input: SuggestNearbyAttractionsIn
         }));
         return { suggestions: suggestionsWithDestination };
     } catch (e) {
-        console.error(e);
+        console.error("Error in getAttractionSuggestions:", e);
         return { error: 'Failed to get suggestions. Please try again.' };
     }
 }

@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState } from "react";
@@ -204,6 +205,17 @@ export default function AttractionsPage() {
                         </Card>
                     </Link>
                 ))}
+            </CardContent>
+          </Card>
+        )}
+
+        {suggestions === null && !isLoading && !error && (
+          <Card className="mt-6">
+            <CardHeader>
+              <CardTitle className="font-headline">No suggestions yet</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p>Enter your interests and location to get started.</p>
             </CardContent>
           </Card>
         )}

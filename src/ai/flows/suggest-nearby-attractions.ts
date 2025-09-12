@@ -1,3 +1,4 @@
+
 // src/ai/flows/suggest-nearby-attractions.ts
 'use server';
 /**
@@ -29,7 +30,7 @@ const SuggestNearbyAttractionsOutputSchema = z.object({
       address: z.string().describe('The address of the attraction.'),
       latitude: z.number().describe('The latitude of the attraction.'),
       longitude: z.number().describe('The longitude of the attraction.'),
-      imageUrl: z.string().url().describe('A URL for an image of the attraction.'),
+      imageUrl: z.string().describe('A URL for an image of the attraction.'),
     })
   ).describe('A list of suggested nearby attractions.'),
 });
@@ -43,18 +44,7 @@ const prompt = ai.definePrompt({
   name: 'suggestNearbyAttractionsPrompt',
   input: {schema: SuggestNearbyAttractionsInputSchema},
   output: {schema: SuggestNearbyAttractionsOutputSchema},
-  prompt: `You are a helpful AI assistant that suggests nearby attractions, landmarks, and points of interest based on the user's location and contextual factors.
-
-  The current time of day is: {{{timeOfDay}}}
-  The current weather is: {{{weather}}}
-  The user's interests are: {{{interests}}}
-
-  Location:
-  Latitude: {{{latitude}}}
-  Longitude: {{{longitude}}}
-
-  Suggest some attractions near this location, taking into account the time of day, weather, and user interests. For each attraction, provide its name, a short description, its full address with exact latitude and longitude, and a placeholder image URL from 'https://picsum.photos/seed/{random}/400/300'. Use a different random seed for each attraction. Return an array of suggestions.
-  `,
+  prompt: `You are a helpful AI assistant that suggests nearby attractions, landmarks, and points of interest based on the user's location and contextual factors.\n\n  The current time of day is: {{{timeOfDay}}}\n  The current weather is: {{{weather}}}\n  The user's interests are: {{{interests}}}\n\n  Location:\n  Latitude: {{{latitude}}}\n  Longitude: {{{longitude}}}\n\n  Suggest some attractions near this location, taking into account the time of day, weather, and user interests. For each attraction, provide its name, a short description, its full address with exact latitude and longitude, and a placeholder image URL from 'https://picsum.photos/400/300'. Return an array of suggestions.\n  `,
 });
 
 const suggestNearbyAttractionsFlow = ai.defineFlow(
@@ -64,7 +54,12 @@ const suggestNearbyAttractionsFlow = ai.defineFlow(
     outputSchema: SuggestNearbyAttractionsOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
-    return output!;
+    try {
+      const {output} = await prompt(input);
+      return output!;
+    } catch (error) {
+      console.error("Error in suggestNearbyAttractionsFlow:", error);
+      throw new Error("Flow failed to execute.");
+    }
   }
 );

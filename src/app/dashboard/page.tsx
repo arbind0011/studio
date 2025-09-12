@@ -7,16 +7,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Map } from '@/components/map';
 import { MapPin } from 'lucide-react';
 import { Loader } from '@/components/loader';
-import { useGeolocated } from 'react-geolocated';
 
 function DashboardContent() {
-
-  const { coords, isGeolocationAvailable, isGeolocationEnabled } = useGeolocated({
-        positionOptions: {
-            enableHighAccuracy: false,
-        },
-        userDecisionTimeout: 5000,
-    });
 
   return (
     <AppShell>
@@ -33,13 +25,7 @@ function DashboardContent() {
             </CardTitle>
           </CardHeader>
           <CardContent className="h-[70vh] p-0 relative">
-            {
-              isGeolocationAvailable && isGeolocationEnabled && coords ? (
-                <Map destinationLat={coords.latitude} destinationLng={coords.longitude} />
-              ) : (
-                <Loader />
-              )
-            }
+            <Map />
           </CardContent>
         </Card>
       </div>
